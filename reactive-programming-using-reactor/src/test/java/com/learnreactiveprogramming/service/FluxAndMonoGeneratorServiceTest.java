@@ -215,4 +215,15 @@ public class FluxAndMonoGeneratorServiceTest {
                 .verifyComplete();
 
     }
+
+    @Test
+    void nameMono_map_filter_defaultEmpty() {
+
+        int stringLength = 4;
+        Mono<String> namesMono = fluxAndMonoGeneratorService.nameMono_map_filter_defaultIfEmpty(stringLength);
+
+        StepVerifier.create(namesMono)
+                .expectNext("no_data")
+                .verifyComplete();
+    }
 }

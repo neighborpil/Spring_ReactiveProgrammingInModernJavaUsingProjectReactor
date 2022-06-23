@@ -2,7 +2,6 @@ package com.learnreactiveprogramming.service;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Function;
 
 import reactor.core.publisher.Flux;
@@ -40,13 +39,35 @@ public class FluxAndMonoGeneratorService {
 
         return namesFlux;
     }
-
     public Mono<String> nameMono_map_filter(int stringLength) {
 
         return Mono.just("alex")
-            .map(String::toUpperCase)
-            .filter(s -> s.length() > stringLength);
+                .map(String::toUpperCase)
+                .filter(s -> s.length() > stringLength)
+                .log();
     }
+
+    public Mono<String> nameMono_map_filter_defaultIfEmpty(int stringLength) {
+
+        return Mono.just("alex")
+            .map(String::toUpperCase)
+            .filter(s -> s.length() > stringLength)
+            .defaultIfEmpty("no_data")
+            .log();
+    }
+
+    public Mono<String> nameMono_map_filter_switchIfEmpty(int stringLength) {
+
+        Mono<String> defaultValue = Mono.just("no_data");
+
+
+        return Mono.just("alex")
+                .map(String::toUpperCase)
+                .filter(s -> s.length() > stringLength)
+                .defaultIfEmpty("no_data")
+                .log();
+    }
+
 
     public Flux<String> namesFlux_flatMap(int stringLength) {
         // filter the string whose length is greater than 3
