@@ -97,4 +97,43 @@ public class FluxAndMonoGeneratorServiceTest {
             .expectNext("A", "L", "E", "X", "C", "H", "L", "O", "E")
             .verifyComplete();
     }
+
+    @Test
+    void namesFlux_flatMap_async() {
+
+        int stringLength = 3;
+
+        Flux<String> namesFlux = fluxAndMonoGeneratorService.namesFlux_flatMap_async(stringLength);
+
+        StepVerifier.create(namesFlux)
+//                .expectNext("A", "L", "E", "X", "C", "H", "L", "O", "E")
+                .expectNextCount(9)
+                .verifyComplete();
+    }
+
+    @Test
+    void namesFlux_concatMap_async() {
+
+        int stringLength = 3;
+
+        Flux<String> namesFlux = fluxAndMonoGeneratorService.namesFlux_concatMap_async(stringLength);
+
+        StepVerifier.create(namesFlux)
+                .expectNext("A", "L", "E", "X", "C", "H", "L", "O", "E")
+//                .expectNextCount(9)
+                .verifyComplete();
+    }
+
+    @Test
+    void namesFlux_concatMap_async_count() {
+
+        int stringLength = 3;
+
+        Flux<String> namesFlux = fluxAndMonoGeneratorService.namesFlux_concatMap_async(stringLength);
+
+        StepVerifier.create(namesFlux)
+//                .expectNext("A", "L", "E", "X", "C", "H", "L", "O", "E")
+                .expectNextCount(9)
+                .verifyComplete();
+    }
 }
