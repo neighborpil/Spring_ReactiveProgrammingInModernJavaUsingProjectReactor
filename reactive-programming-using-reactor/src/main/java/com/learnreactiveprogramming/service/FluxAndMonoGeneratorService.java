@@ -60,11 +60,10 @@ public class FluxAndMonoGeneratorService {
 
         Mono<String> defaultValue = Mono.just("no_data");
 
-
         return Mono.just("alex")
                 .map(String::toUpperCase)
                 .filter(s -> s.length() > stringLength)
-                .defaultIfEmpty("no_data")
+                .switchIfEmpty(defaultValue)
                 .log();
     }
 
@@ -155,6 +154,65 @@ public class FluxAndMonoGeneratorService {
                 .switchIfEmpty(defaultFlux)
                 .flatMap(s -> splitString(s))
                 .log();
+    }
+
+    // concat
+
+    public Flux<String> explore_concat() {
+
+        Flux<String> abcFlux = Flux.just("A", "B", "C");
+        Flux<String> defFlux = Flux.just("D", "E", "F");
+
+        return Flux.concat(abcFlux, defFlux).log();
+    }
+
+    public Flux<String> explore_concatWith() {
+
+        Flux<String> abcFlux = Flux.just("A", "B", "C");
+        Flux<String> defFlux = Flux.just("D", "E", "F");
+
+        return abcFlux.concatWith(defFlux).log();
+    }
+
+    public Flux<String> explore_concatWith_mono() {
+
+        Mono<String> aFlux = Mono.just("A");
+        Mono<String> dFlux = Mono.just("D");
+
+        return aFlux.concatWith(dFlux).log(); // "A", "B"
+    }
+
+    // merge 행력식으로 하나씩 끼워넣는다, 두개의 flux에서 먼저 오는 것을 처리한다
+    public Flux<String> explore_merge() {
+
+        Flux<String> abcFlux = Flux.just("A", "B", "C")
+            .delayElements(Duration.ofMillis(100));
+
+        Flux<String> defFlux = Flux.just("D", "E", "F")
+            .delayElements(Duration.ofMillis(120));
+
+        return Flux.merge(abcFlux, defFlux).log();
+    }
+
+    public Flux<String> explore_mergeWith() {
+
+        Flux<String> abcFlux = Flux.just("A", "B", "C")
+            .delayElements(Duration.ofMillis(100));
+
+        Flux<String> defFlux = Flux.just("D", "E", "F")
+            .delayElements(Duration.ofMillis(120));
+
+        return abcFlux.mergeWith(defFlux).log();
+    }
+
+    // merge와 같으나 staticFunction이다
+    public Flux<String> explore_mergeWith_mono() {
+
+        Mono<String> aMono= Mono.just("A");
+
+        Mono<String> bMono = Mono.just("B");
+
+        return aMono.mergeWith(bMono).log();
     }
 
     public Mono<List<String>> namesMono_flatMap(int stringLength) {

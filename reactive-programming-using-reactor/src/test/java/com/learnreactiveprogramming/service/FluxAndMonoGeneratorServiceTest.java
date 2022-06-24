@@ -226,4 +226,70 @@ public class FluxAndMonoGeneratorServiceTest {
                 .expectNext("no_data")
                 .verifyComplete();
     }
+
+    @Test
+    void nameMono_map_filter_switchIfEmpty() {
+        int stringLength = 4;
+        Mono<String> namesMono = fluxAndMonoGeneratorService.nameMono_map_filter_defaultIfEmpty(stringLength);
+
+        StepVerifier.create(namesMono)
+            .expectNext("no_data")
+            .verifyComplete();
+    }
+
+    // concat
+
+    @Test
+    void explore_concat() {
+
+        var concatFlux = fluxAndMonoGeneratorService.explore_concat();
+
+        StepVerifier.create(concatFlux)
+            .expectNext("A", "B", "C", "D", "E", "F")
+            .verifyComplete();
+
+    }
+
+    @Test
+    void explore_concatWith() {
+
+        var concatFlux = fluxAndMonoGeneratorService.explore_concatWith();
+
+        StepVerifier.create(concatFlux)
+            .expectNext("A", "B", "C", "D", "E", "F")
+            .verifyComplete();
+    }
+
+    @Test
+    void explore_concatWith_mono() {
+
+        var concatMono = fluxAndMonoGeneratorService.explore_concatWith_mono();
+
+        StepVerifier.create(concatMono)
+            .expectNext("A", "D")
+            .verifyComplete();
+    }
+
+    @Test
+    void explore_merge() {
+
+        var concatFlux = fluxAndMonoGeneratorService.explore_merge();
+
+        StepVerifier.create(concatFlux)
+            .expectNext("A", "D", "B", "E", "C", "F")
+            .verifyComplete();
+    }
+
+    @Test
+    void explore_mergeWith() {
+
+        var concatFlux = fluxAndMonoGeneratorService.explore_mergeWith();
+
+        StepVerifier.create(concatFlux)
+            .expectNext("A", "D", "B", "E", "C", "F")
+            .verifyComplete();
+    }
+
+
 }
+
