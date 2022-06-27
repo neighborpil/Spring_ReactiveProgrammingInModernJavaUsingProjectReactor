@@ -205,7 +205,7 @@ public class FluxAndMonoGeneratorService {
         return abcFlux.mergeWith(defFlux).log();
     }
 
-    // merge와 같으나 staticFunction이다
+    // merge와 같으나 instance Function이다
     public Flux<String> explore_mergeWith_mono() {
 
         Mono<String> aMono= Mono.just("A");
@@ -213,6 +213,69 @@ public class FluxAndMonoGeneratorService {
         Mono<String> bMono = Mono.just("B");
 
         return aMono.mergeWith(bMono).log();
+    }
+
+    // mergeSequential, 동시에 데이터를 가져오나 결과는 순차적으로 배열한다
+
+    public Flux<String> explore_mergeSequential() {
+
+        Flux<String> abcFlux = Flux.just("A", "B", "C")
+            .delayElements(Duration.ofMillis(100));
+
+        Flux<String> defFlux = Flux.just("D", "E", "F")
+            .delayElements(Duration.ofMillis(120));
+
+        return Flux.mergeSequential(abcFlux, defFlux).log();
+    }
+
+    // zip, zipWith - 변수 3개(2개 플럭스, 람다 펑션), 행렬연산한다, 2~8개 플럭스를 합칠 수 있다
+    // 하나의 element를 만들기 위하여 모든 퍼블리셔들이 참가
+    // 하나의 퍼블리셔가 OnComplete이벤트를 보낼때까지 계속한다
+    public Flux<String> explore_zip() {
+
+        Flux<String> abcFlux = Flux.just("A", "B", "C");
+
+        Flux<String> defFlux = Flux.just("D", "E", "F");
+
+        return Flux.zip(abcFlux, defFlux, (first, second) -> first + second).log();
+        // AD, BE, CF
+    }
+
+    // 플럭스가 2개 이상이면 튜플을 반환하고 처리한다
+    public Flux<String> explore_zip_1() {
+
+        Flux<String> abcFlux = Flux.just("A", "B", "C");
+
+        Flux<String> defFlux = Flux.just("D", "E", "F");
+
+        Flux<String> _123Flux = Flux.just("1", "2", "3");
+
+        Flux<String> _456Flux = Flux.just("4", "5", "6");
+
+        return Flux.zip(abcFlux, defFlux, _123Flux, _456Flux)
+            .map(t4 -> t4.getT1() + t4.getT2() + t4.getT3() + t4.getT4()).log();
+        // AD14, BE25, CF36
+    }
+
+    public Flux<String> explore_zipWith() {
+
+        Flux<String> abcFlux = Flux.just("A", "B", "C");
+
+        Flux<String> defFlux = Flux.just("D", "E", "F");
+
+        return abcFlux.zipWith(defFlux, (first, second) -> first + second).log();
+        // AD, BE, CF
+    }
+
+    public Mono<String> explore_zipWith_mono() {
+
+        Mono<String> aMono= Mono.just("A");
+
+        Mono<String> bMono = Mono.just("B");
+
+        return aMono.zipWith(bMono)
+            .map(t2 -> t2.getT1() + t2.getT2())
+            .log();
     }
 
     public Mono<List<String>> namesMono_flatMap(int stringLength) {

@@ -291,5 +291,61 @@ public class FluxAndMonoGeneratorServiceTest {
     }
 
 
+    @Test
+    void explore_mergeWith_mono() {
+        var concatFlux = fluxAndMonoGeneratorService.explore_mergeWith_mono();
+
+        StepVerifier.create(concatFlux)
+            .expectNext("A", "B")
+            .verifyComplete();
+    }
+
+    @Test
+    void explore_mergeSequential() {
+
+        var concatFlux = fluxAndMonoGeneratorService.explore_mergeSequential();
+
+        StepVerifier.create(concatFlux)
+            .expectNext("A", "B", "C", "D", "E", "F")
+            .verifyComplete();
+    }
+
+    @Test
+    void explore_zip() {
+
+        var concatFlux = fluxAndMonoGeneratorService.explore_zip();
+
+        StepVerifier.create(concatFlux)
+            .expectNext("AD", "BE", "CF")
+            .verifyComplete();
+    }
+
+    @Test
+    void explore_zip_1() {
+
+        var concatFlux = fluxAndMonoGeneratorService.explore_zip_1();
+
+        StepVerifier.create(concatFlux)
+        .expectNext("AD14", "BE25", "CF36")
+            .verifyComplete();
+    }
+
+    @Test
+    void explore_zipWith() {
+        var concatFlux = fluxAndMonoGeneratorService.explore_zipWith();
+
+        StepVerifier.create(concatFlux)
+            .expectNext("AD", "BE", "CF")
+            .verifyComplete();
+    }
+
+    @Test
+    void explore_zipWith_mono() {
+        var zipFlux = fluxAndMonoGeneratorService.explore_zipWith_mono();
+
+        StepVerifier.create(zipFlux)
+            .expectNext("AB")
+            .verifyComplete();
+    }
 }
 
