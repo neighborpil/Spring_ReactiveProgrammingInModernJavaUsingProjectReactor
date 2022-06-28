@@ -29,6 +29,19 @@ public class FluxAndMonoGeneratorService {
 //            .map(s -> s.toUpperCase())
             .filter(s -> s.length() > stringLength) // ALEX, CHLOE
             .map(s -> s.length() + "-" + s) // 4-ALEX, 5-CHLOE
+            .doOnNext(name -> {
+                System.out.println("Name is : " + name);
+                name.toLowerCase(); // doesn't effect to original result
+            })
+            .doOnSubscribe(s -> {
+                System.out.println("Subscription is: " + s);
+            })
+            .doFinally(signaltype -> {
+                System.out.println("Inside doFinally: " + signaltype);
+            })
+            .doOnComplete(() -> {
+                System.out.println("Inside the complete callback");
+            })
             .log();
     }
 
@@ -299,6 +312,17 @@ public class FluxAndMonoGeneratorService {
         List<String> charList = List.of(charArray);// ALEX -> A, L, E, X
         return Mono.just(charList);
     }
+
+    // exception handling
+    public Flux<String> exception_flux() {
+
+        return Flux.just("A", "B", "C")
+            .concatWith(Flux.error(new RuntimeException("Exception Occured")))
+            .concatWith(Flux.just("D"))
+            .log();
+
+    }
+
 
     public static void main(String[] args) {
 

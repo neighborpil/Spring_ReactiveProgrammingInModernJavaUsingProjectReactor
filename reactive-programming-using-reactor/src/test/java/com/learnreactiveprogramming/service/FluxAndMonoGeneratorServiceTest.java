@@ -347,5 +347,38 @@ public class FluxAndMonoGeneratorServiceTest {
             .expectNext("AB")
             .verifyComplete();
     }
+
+    @Test
+    void exception_flux() {
+
+        Flux<String> value = fluxAndMonoGeneratorService.exception_flux();
+
+        StepVerifier.create(value)
+            .expectNext("A", "B", "C")
+            .expectError(RuntimeException.class)
+            .verify();
+    }
+
+    @Test
+    void exception_flux_1() {
+
+        Flux<String> value = fluxAndMonoGeneratorService.exception_flux();
+
+        StepVerifier.create(value)
+            .expectNext("A", "B", "C")
+            .expectError()
+            .verify();
+    }
+
+    @Test
+    void exception_flux_2() {
+
+        Flux<String> value = fluxAndMonoGeneratorService.exception_flux();
+
+        StepVerifier.create(value)
+            .expectNext("A", "B", "C")
+            .expectErrorMessage("Exception Occured")
+            .verify();
+    }
 }
 
