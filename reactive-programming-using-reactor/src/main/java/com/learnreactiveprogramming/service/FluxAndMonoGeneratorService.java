@@ -341,16 +341,50 @@ public class FluxAndMonoGeneratorService {
         var recoveryFlux = Flux.just("D", "E", "F");
 
         return Flux.just("A", "B", "C")
-            .concatWith(Flux.error(e))
-            .onErrorResume(ex -> {
-                log.error("Exception is ", ex);
-                if (ex instanceof IllegalStateException) {
-                    return recoveryFlux;
+                .concatWith(Flux.error(e))
+                .onErrorResume(ex -> {
+                    log.error("Exception is ", ex);
+                    if (ex instanceof IllegalStateException) {
+                        return recoveryFlux;
+                    }
+                    return Flux.error(ex);
+                })
+                .log();
+    }
+
+    // exception handling
+    public Flux<String> explorer_OnErrorContinue() {
+
+        return Flux.just("A", "B", "C")
+                .map(name -> {
+                    if (name.equals("B")) {
+                        throw new IllegalStateException("Exception Occurred");
+                    }
+                    return name;
+                })
+                .onErrorContinue((ex, name) -> {
+                    log.error("Exception is ", ex);
+                    log.error("Name is ", name);
+                })
+                .log();
+    }
+
+    // exception handling
+    public Flux<String> explorer_OnErrorContinue_1() {
+
+        return Flux.just("A", "B", "C")
+            .map(name -> {
+                if (name.equals("B")) {
+                    throw new IllegalStateException("Exception Occurred");
                 }
-                return Flux.error(ex);
+                return name;
+            })
+            .concatWith(Flux.just("D"))
+            .onErrorContinue((ex, name) -> {
+                log.error("Exception is ", ex);
+                log.error("Name is ", name);
             })
             .log();
-
     }
 
 

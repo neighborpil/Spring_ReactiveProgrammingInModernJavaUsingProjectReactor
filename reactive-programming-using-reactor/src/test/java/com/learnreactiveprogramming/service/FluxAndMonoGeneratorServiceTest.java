@@ -417,5 +417,25 @@ public class FluxAndMonoGeneratorServiceTest {
             .verify();
 
     }
+
+    @Test
+    void explorer_OnErrorContinue() {
+
+        Flux<String> value = fluxAndMonoGeneratorService.explorer_OnErrorContinue();
+
+        StepVerifier.create(value)
+                .expectNext("A", "C")
+                .verifyComplete();
+    }
+
+    @Test
+    void explorer_OnErrorContinue_1() {
+
+        Flux<String> value = fluxAndMonoGeneratorService.explorer_OnErrorContinue_1();
+
+        StepVerifier.create(value)
+                .expectNext("A", "C", "D")
+                .verifyComplete();
+    }
 }
 
