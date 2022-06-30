@@ -4,9 +4,11 @@ import java.time.Duration;
 import java.util.List;
 import java.util.function.Function;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 public class FluxAndMonoGeneratorService {
 
     public Flux<String> namesFlux() {
@@ -319,6 +321,34 @@ public class FluxAndMonoGeneratorService {
         return Flux.just("A", "B", "C")
             .concatWith(Flux.error(new RuntimeException("Exception Occured")))
             .concatWith(Flux.just("D"))
+            .log();
+
+    }
+
+    // exception handling
+    public Flux<String> explorer_OnErrorReturn() {
+
+        return Flux.just("A", "B", "C")
+            .concatWith(Flux.error(new IllegalStateException("Exception Occured")))
+            .onErrorReturn("D") // recover from exception and return default value
+            .log();
+
+    }
+
+    // exception handling
+    public Flux<String> explorer_OnErrorResume(Exception e) {
+
+        var recoveryFlux = Flux.just("D", "E", "F");
+
+        return Flux.just("A", "B", "C")
+            .concatWith(Flux.error(e))
+            .onErrorResume(ex -> {
+                log.error("Exception is ", ex);
+                if (ex instanceof IllegalStateException) {
+                    return recoveryFlux;
+                }
+                return Flux.error(ex);
+            })
             .log();
 
     }
