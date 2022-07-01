@@ -3,10 +3,13 @@ package com.learnreactiveprogramming.service;
 import com.learnreactiveprogramming.domain.Movie;
 import com.learnreactiveprogramming.domain.MovieInfo;
 import com.learnreactiveprogramming.domain.Review;
+import com.learnreactiveprogramming.exception.MovieException;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 public class MovieReactiveService {
 
     private MovieInfoService movieInfoService;
@@ -26,6 +29,10 @@ public class MovieReactiveService {
                         movieInfo.getMovieInfoId())
                     .collectList();
                 return reviewsMono.map(reviewsList -> new Movie(movieInfo, reviewsList));
+            })
+            .onErrorMap((ex) -> {
+                log.error("Exception is : " + ex);
+                throw new MovieException(ex.getMessage());
             })
             .log();
 

@@ -1,5 +1,6 @@
 package com.learnreactiveprogramming.service;
 
+import com.learnreactiveprogramming.exception.ReactorException;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -436,6 +437,72 @@ public class FluxAndMonoGeneratorServiceTest {
         StepVerifier.create(value)
                 .expectNext("A", "C", "D")
                 .verifyComplete();
+    }
+
+    @Test
+    void explorer_OnErrorMap() {
+
+        Flux<String> value = fluxAndMonoGeneratorService.explorer_OnErrorMap();
+
+        StepVerifier.create(value)
+            .expectNext("A")
+            .expectError(ReactorException.class)
+            .verify();
+
+    }
+
+    @Test
+    void explorer_doOnError() {
+
+        Flux<String> value = fluxAndMonoGeneratorService.explorer_doOnError();
+
+        StepVerifier.create(value)
+            .expectNext("A", "B", "C")
+            .expectError(IllegalStateException.class)
+            .verify();
+
+    }
+
+    @Test
+    void explorer_Mono_OnErrorReturn() {
+
+        Mono<Object> value = fluxAndMonoGeneratorService.explorer_Mono_OnErrorReturn();
+
+        StepVerifier.create(value)
+            .expectNext("abc")
+            .verifyComplete();
+    }
+
+    @Test
+    void exception_mono_onErrorMap() {
+
+        var e = new RuntimeException("Exception Occurred");
+
+        Mono<Object> value = fluxAndMonoGeneratorService.exception_mono_onErrorMap(e);
+
+        StepVerifier.create(value)
+            .expectError(ReactorException.class)
+            .verify();
+    }
+    @Test
+    void exception_mono_onErrorContinue() {
+
+        var input = "abc";
+        Mono<String> value = fluxAndMonoGeneratorService.exception_mono_onErrorContinue(input);
+
+        StepVerifier.create(value)
+            .verifyComplete();
+    }
+
+    @Test
+    void exception_mono_onErrorContinue_reactor() {
+
+        var input = "reactor";
+        Mono<String> value = fluxAndMonoGeneratorService.exception_mono_onErrorContinue(input);
+
+        StepVerifier.create(value)
+            .expectNext("reactor")
+            .verifyComplete();
     }
 }
 

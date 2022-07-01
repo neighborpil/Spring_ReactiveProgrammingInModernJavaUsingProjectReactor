@@ -1,5 +1,6 @@
 package com.learnreactiveprogramming.service;
 
+import com.learnreactiveprogramming.exception.ReactorException;
 import java.time.Duration;
 import java.util.List;
 import java.util.function.Function;
@@ -326,6 +327,7 @@ public class FluxAndMonoGeneratorService {
     }
 
     // exception handling
+    // recover from exception
     public Flux<String> explorer_OnErrorReturn() {
 
         return Flux.just("A", "B", "C")
@@ -336,6 +338,7 @@ public class FluxAndMonoGeneratorService {
     }
 
     // exception handling
+    // recover from exception
     public Flux<String> explorer_OnErrorResume(Exception e) {
 
         var recoveryFlux = Flux.just("D", "E", "F");
@@ -353,6 +356,7 @@ public class FluxAndMonoGeneratorService {
     }
 
     // exception handling
+    // recover from exception
     public Flux<String> explorer_OnErrorContinue() {
 
         return Flux.just("A", "B", "C")
@@ -387,6 +391,81 @@ public class FluxAndMonoGeneratorService {
             .log();
     }
 
+    // onErrorMap : 받은 예외를 다른 예외로 바꿔준다
+    // take an action and throw the Exception
+    public Flux<String> explorer_OnErrorMap() {
+
+        return Flux.just("A", "B", "C")
+            .map(name -> {
+                if (name.equals("B")) {
+                    throw new IllegalStateException("Exception Occurred");
+                }
+                return name;
+            })
+            .concatWith(Flux.just("D"))
+            .onErrorMap((ex) -> {
+                log.error("Exception is ", ex);
+                return new ReactorException(ex, ex.getMessage());
+            })
+            .log();
+    }
+
+
+
+    // doOnErro() : 예외가 발생했을때 동작을 한다. 기존의 reactive stream에는 영향을 미치지 않는다. 사이드 이펙트, 기존 reactive stream에서는 에러가 발생한다, try/catch block과 비슷
+    // It doen't recover from exception
+    // take an action and throw the Exception
+    public Flux<String> explorer_doOnError() {
+
+        return Flux.just("A", "B", "C")
+            .concatWith(Flux.error(new IllegalStateException("Exception Occured")))
+            .doOnError(ex -> {
+                log.error("Exception is ", ex);
+            })
+            .log();
+
+    }
+
+    public Mono<Object> explorer_Mono_OnErrorReturn() {
+
+        return Mono.just("A")
+            .map(value -> {
+                throw new RuntimeException("Exception Occurred");
+            })
+            .onErrorReturn("abc")
+            .log();
+
+    }
+
+    public Mono<Object> exception_mono_onErrorMap(Exception e) {
+
+        return Mono.just("B")
+            .map(value -> {
+                throw new RuntimeException("Exception Occurred");
+            })
+            .onErrorMap(ex -> {
+                System.out.println("Exception is " + ex);
+                return new ReactorException(ex, ex.getMessage());
+            })
+            .log();
+
+    }
+
+    public Mono<String> exception_mono_onErrorContinue(String input) {
+
+        return Mono.just(input)
+            .map(value -> {
+                if (value.equals("abc")) {
+                    throw new RuntimeException("abc entered");
+                }
+                return value;
+            })
+            .onErrorContinue((ex, name) -> {
+                log.error("Error is : ", ex);
+                log.error("Name is : " + name);
+            })
+            .log();
+    }
 
     public static void main(String[] args) {
 
