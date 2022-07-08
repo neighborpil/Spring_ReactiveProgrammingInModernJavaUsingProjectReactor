@@ -29,3 +29,6 @@ https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Mono.html
  - examples
     + stock tickers
     + uber driver ticketing
+
+### swagger link
+ - http://localhost:8080/movies/webjars/swagger-ui/index.html?configUrl=/movies/v3/api-docs/swagger-config
