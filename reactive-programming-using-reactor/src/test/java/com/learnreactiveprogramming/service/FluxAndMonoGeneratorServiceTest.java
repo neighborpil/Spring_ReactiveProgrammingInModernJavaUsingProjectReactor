@@ -1,12 +1,14 @@
 package com.learnreactiveprogramming.service;
 
 import com.learnreactiveprogramming.exception.ReactorException;
+import java.time.Duration;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.List;
+import reactor.test.scheduler.VirtualTimeScheduler;
 
 public class FluxAndMonoGeneratorServiceTest {
 
@@ -115,13 +117,29 @@ public class FluxAndMonoGeneratorServiceTest {
     }
 
     @Test
-    void namesFlux_concatMap_async() {
+    void namesFlux_concatMap() {
 
         int stringLength = 3;
 
-        Flux<String> namesFlux = fluxAndMonoGeneratorService.namesFlux_concatMap_async(stringLength);
+        Flux<String> namesFlux = fluxAndMonoGeneratorService.namesFlux_concatMap(stringLength);
 
         StepVerifier.create(namesFlux)
+            .expectNext("A", "L", "E", "X", "C", "H", "L", "O", "E")
+//                .expectNextCount(9)
+            .verifyComplete();
+    }
+
+    @Test
+    void namesFlux_concatMap_virtualTimer() {
+
+        VirtualTimeScheduler.getOrSet();
+
+        int stringLength = 3;
+
+        Flux<String> namesFlux = fluxAndMonoGeneratorService.namesFlux_concatMap(stringLength);
+
+        StepVerifier.withVirtualTime(() -> namesFlux)
+            .thenAwait(Duration.ofSeconds(10))
                 .expectNext("A", "L", "E", "X", "C", "H", "L", "O", "E")
 //                .expectNextCount(9)
                 .verifyComplete();
@@ -132,7 +150,7 @@ public class FluxAndMonoGeneratorServiceTest {
 
         int stringLength = 3;
 
-        Flux<String> namesFlux = fluxAndMonoGeneratorService.namesFlux_concatMap_async(stringLength);
+        Flux<String> namesFlux = fluxAndMonoGeneratorService.namesFlux_concatMap(stringLength);
 
         StepVerifier.create(namesFlux)
 //                .expectNext("A", "L", "E", "X", "C", "H", "L", "O", "E")

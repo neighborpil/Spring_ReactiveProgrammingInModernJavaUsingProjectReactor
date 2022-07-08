@@ -112,7 +112,7 @@ public class FluxAndMonoGeneratorService {
                 .log();
     }
 
-    public Flux<String> namesFlux_concatMap_async(int stringLength) {
+    public Flux<String> namesFlux_concatMap(int stringLength) {
         // filter the string whose length is greater than 3
         return Flux.fromIterable(List.of("alex", "ben", "chloe"))
                 .map(String::toUpperCase) // ALEX, BEN, CHLOE
