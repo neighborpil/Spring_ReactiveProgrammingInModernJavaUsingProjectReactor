@@ -21,3 +21,14 @@ https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html
 https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Mono.html
 
 
+### Cold Stream
+ - all the subscribers get the same data
+ 
+### Hot stream
+ - any new subscribers get the current data
+ - examples
+    + stock tickers
+    + uber driver ticketing
+
+### swagger link
+ - http://localhost:8080/movies/webjars/swagger-ui/index.html?configUrl=/movies/v3/api-docs/swagger-config
