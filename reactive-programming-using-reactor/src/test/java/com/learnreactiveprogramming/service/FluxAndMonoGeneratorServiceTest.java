@@ -4,11 +4,13 @@ import com.learnreactiveprogramming.exception.ReactorException;
 import java.time.Duration;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.List;
 import reactor.test.scheduler.VirtualTimeScheduler;
+import reactor.tools.agent.ReactorDebugAgent;
 
 public class FluxAndMonoGeneratorServiceTest {
 
@@ -463,9 +465,55 @@ public class FluxAndMonoGeneratorServiceTest {
         Flux<String> value = fluxAndMonoGeneratorService.explorer_OnErrorMap();
 
         StepVerifier.create(value)
+                .expectNext("A")
+                .expectError(ReactorException.class)
+                .verify();
+
+    }
+
+    @Test
+    void explorer_OnErrorMap_onOperatorDebug() {
+
+        Hooks.onOperatorDebug();
+
+        Flux<String> value = fluxAndMonoGeneratorService.explorer_OnErrorMap_2(new RuntimeException("runtime exception"));
+
+        StepVerifier.create(value)
             .expectNext("A")
             .expectError(ReactorException.class)
             .verify();
+
+    }
+
+
+    @Test
+    void explorer_OnErrorMap_onOperatorDebug_2() {
+
+//        Hooks.onOperatorDebug(); // 부하가 많이 걸려 추천하지 않음
+
+        Flux<String> value = fluxAndMonoGeneratorService.explorer_OnErrorMap_2(new RuntimeException("runtime exception"));
+
+        StepVerifier.create(value)
+                .expectNext("A")
+                .expectError(ReactorException.class)
+                .verify();
+
+    }
+
+    @Test
+    void explorer_OnErrorMap_reactorDebugAgent() {
+
+//        Hooks.onOperatorDebug(); // 부하가 많이 걸려 추천하지 않음
+        ReactorDebugAgent.init();
+        ReactorDebugAgent.processExistingClasses();
+        var e = new RuntimeException("Not a valid State");
+
+        Flux<String> value = fluxAndMonoGeneratorService.explorer_OnErrorMap_2(e);
+
+        StepVerifier.create(value)
+                .expectNext("A")
+                .expectError(ReactorException.class)
+                .verify();
 
     }
 
@@ -521,6 +569,66 @@ public class FluxAndMonoGeneratorServiceTest {
         StepVerifier.create(value)
             .expectNext("reactor")
             .verifyComplete();
+    }
+
+    @Test
+    void explore_generate() {
+
+        Flux<Integer> flux = fluxAndMonoGeneratorService.explore_generate().log();
+
+        StepVerifier.create(flux)
+                .expectNextCount(10)
+                .verifyComplete();
+
+    }
+
+    @Test
+    void explore_create() {
+
+        var flux = fluxAndMonoGeneratorService.explore_create().log();
+
+        StepVerifier.create(flux)
+                .expectNextCount(3)
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_create_2() {
+        var flux = fluxAndMonoGeneratorService.explore_create_2().log();
+
+        StepVerifier.create(flux)
+                .expectNextCount(6)
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_create_3() {
+        var flux = fluxAndMonoGeneratorService.explore_create_3().log();
+
+        StepVerifier.create(flux)
+                .expectNextCount(9)
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_create_mono() {
+        var mono = fluxAndMonoGeneratorService.explore_create_mono();
+
+        StepVerifier.create(mono)
+                .expectNext("alex")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_handle() {
+
+
+        var flux = fluxAndMonoGeneratorService.explore_handle();
+
+        StepVerifier.create(flux)
+                .expectNextCount(2)
+                .verifyComplete();
+
     }
 }
 

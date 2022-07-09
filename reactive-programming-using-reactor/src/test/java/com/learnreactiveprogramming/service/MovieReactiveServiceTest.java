@@ -88,4 +88,5 @@ class MovieReactiveServiceTest {
             })
             .verifyComplete();
     }
+
 }

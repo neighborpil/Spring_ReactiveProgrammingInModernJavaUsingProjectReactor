@@ -39,8 +39,25 @@ public class MovieReactiveService {
 
         Flux<MovieInfo> movieInfoFlux = movieInfoService.retrieveMoviesFlux();
         return movieInfoFlux
+                .flatMap(movieInfo -> {
+                    Mono<List<Review>> reviewsMono = reviewService.retrieveReviewsFlux(
+                                    movieInfo.getMovieInfoId())
+                            .collectList();
+                    return reviewsMono.map(reviewsList -> new Movie(movieInfo, reviewsList));
+                })
+                .onErrorMap((ex) -> {
+                    log.error("Exception is : " + ex);
+                    throw new MovieException(ex.getMessage());
+                })
+                .log();
+    }
+
+    public Flux<Movie> getAllMovies_restClient() {
+
+        Flux<MovieInfo> movieInfoFlux = movieInfoService.retrieveAllMovieInfo_RestClient();
+        return movieInfoFlux
             .flatMap(movieInfo -> {
-                Mono<List<Review>> reviewsMono = reviewService.retrieveReviewsFlux(
+                Mono<List<Review>> reviewsMono = reviewService.retrieveReviewsFlux_RestClient(
                         movieInfo.getMovieInfoId())
                     .collectList();
                 return reviewsMono.map(reviewsList -> new Movie(movieInfo, reviewsList));
@@ -110,6 +127,16 @@ public class MovieReactiveService {
         Mono<List<Review>> reviewList = reviewService.retrieveReviewsFlux(movieId).collectList();
 
         return movieInfoMono.zipWith(reviewList, (movieInfo, reviews) -> new Movie(movieInfo, reviews));
+    }
+
+    public Mono<Movie> getMovieById_restClient(long movieId) {
+
+        Mono<MovieInfo> movieInfoMono = movieInfoService.retrieveAllMovieInfoById_RestClient(movieId);
+        Mono<List<Review>> reviewList = reviewService.retrieveReviewsFlux_RestClient(movieId).collectList();
+
+        return movieInfoMono
+                .zipWith(reviewList, (movieInfo, reviews) -> new Movie(movieInfo, reviews))
+                .log();
     }
 
     public Flux<Movie> getAllMovies_repeat() {
