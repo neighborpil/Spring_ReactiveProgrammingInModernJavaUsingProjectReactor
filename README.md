@@ -32,3 +32,23 @@ https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Mono.html
 
 ### swagger link
  - http://localhost:8080/movies/webjars/swagger-ui/index.html?configUrl=/movies/v3/api-docs/swagger-config
+ 
+### Reactor debuuging tool dependency
+ - guide line : https://projectreactor.io/docs/core/release/reference/#reactor-tools-debug
+ 
+ - maven
+```
+<dependency>
+    <groupId>io.projectreactor</groupId>
+    <artifactId>reactor-tools</artifactId>
+    
+</dependency>
+
+```
+ - gradle
+ 
+ ```
+ dependencies {
+   compile 'io.projectreactor:reactor-tools'
+}
+ ```
