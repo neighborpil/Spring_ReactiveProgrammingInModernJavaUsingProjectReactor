@@ -56,7 +56,7 @@ https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Mono.html
  ### ReactorDebugAgent
   - main thread에 영향을 주지 않으면서 디버깅 하는 방법이다
   - spring boot application의 main 메소드에 선언이 필요하다
- 
+  - reactor-tools dependency가 필요하다 
  ```
  public static void main (String[] main) {
  
